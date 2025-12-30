@@ -1,0 +1,73 @@
+# Home Assistant Automation for Ubiquiti Stock Alerts
+#
+# Add this automation to your Home Assistant configuration.
+#
+# Prerequisites:
+# 1. Create webhook trigger: Go to Settings > Automations > Create Automation
+#    Use webhook ID: ubiquiti_stock_alert
+# 2. Configure Pushover integration in Home Assistant
+# 3. Have media_player.home_group set up for TTS
+#
+# The webhook receives:
+#   - product_name: Human-readable product name
+#   - product_sku: Product SKU
+#   - source: "discord" or "store_poller"
+#   - quantity: Available quantity (if known)
+#   - url: Product URL
+#   - message: Raw Discord message (if from Discord)
+
+alias: "Ubiquiti Stock Alert"
+description: "Receives stock alerts from the monitoring service and sends notifications"
+trigger:
+  - platform: webhook
+    webhook_id: ubiquiti_stock_alert
+    local_only: true
+    allowed_methods:
+      - POST
+condition: []
+action:
+  # 1. TTS to speakers (7am-10pm only)
+  - if:
+      - condition: time
+        after: "07:00:00"
+        before: "22:00:00"
+    then:
+      - service: tts.speak
+        target:
+          entity_id: media_player.home_group
+        data:
+          message: >-
+            Ubiquiti stock alert! {{ trigger.json.product_name }} is now
+            available.
+          cache: false
+
+  # 2. TTS to phone via HA Companion app (always)
+  - service: notify.mobile_app_phone
+    data:
+      title: "Stock Alert"
+      message: "{{ trigger.json.product_name }} is available!"
+      data:
+        tts_text: "Ubiquiti stock alert! {{ trigger.json.product_name }} is now available."
+
+  # 3. Pushover emergency priority (always)
+  # This will buzz every 30 seconds until acknowledged in the Pushover app
+  - service: notify.pushover
+    data:
+      title: "Ubiquiti Stock Alert"
+      message: >-
+        {{ trigger.json.product_name }} is now available!
+
+        Source: {{ trigger.json.source }}
+        {% if trigger.json.quantity %}Quantity: {{ trigger.json.quantity }}{% endif %}
+
+        {{ trigger.json.url }}
+      data:
+        priority: 2
+        retry: 30
+        expire: 3600
+        sound: persistent
+        url: "{{ trigger.json.url }}"
+        url_title: "Buy Now"
+
+mode: parallel
+max: 10

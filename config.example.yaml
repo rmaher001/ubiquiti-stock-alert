@@ -1,0 +1,52 @@
+# Ubiquiti Stock Alert Configuration
+# Copy this file to config.yaml and fill in your values
+# NEVER commit config.yaml - it contains secrets
+
+discord:
+  # Your secondary Discord account token
+  # Get this from browser DevTools > Network tab > Authorization header
+  token: "YOUR_DISCORD_TOKEN_HERE"
+
+  # Discord roles to watch for (these trigger instant alerts)
+  # These should match the role names in UbiquitiStockAlerts
+  watched_roles:
+    - "UVC-G6-180"
+    - "UVC-G6-Pro-Entry"
+    - "UTR"
+
+store_poller:
+  # Enable/disable direct store.ui.com polling (backup method)
+  enabled: true
+
+  # Polling interval in seconds (minimum 60 to avoid rate limiting)
+  interval_seconds: 60
+
+  # Products to monitor directly on store.ui.com
+  products:
+    - sku: "uvc-g6-180"
+      name: "G6 180"
+      url: "https://store.ui.com/us/en/collections/cameras-background/products/uvc-g6-180"
+    - sku: "uvc-g6-pro-entry"
+      name: "G6 Pro Entry"
+      url: "https://store.ui.com/us/en/collections/cameras-background/products/uvc-g6-pro-entry"
+    - sku: "utr"
+      name: "UniFi Travel Router"
+      url: "https://store.ui.com/us/en/collections/accessories-background/products/utr"
+
+home_assistant:
+  # Webhook URL - replace with your HA instance
+  # Format: http://IP:8123/api/webhook/WEBHOOK_ID
+  webhook_url: "http://YOUR_HA_IP:8123/api/webhook/ubiquiti_stock_alert"
+
+  # Optional: Long-lived access token for authenticated endpoints
+  # Only needed if webhook requires auth
+  # token: "YOUR_HA_LONG_LIVED_TOKEN"
+
+deduplication:
+  # Time window in minutes before the same product can alert again
+  # Set to 0 to disable deduplication
+  window_minutes: 30
+
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"

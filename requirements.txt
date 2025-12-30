@@ -1,0 +1,11 @@
+# Discord self-bot library (user account, not bot account)
+discord.py-self>=2.0.0
+
+# Async HTTP client
+aiohttp>=3.9.0
+
+# Configuration parsing
+pyyaml>=6.0
+
+# For store page parsing
+beautifulsoup4>=4.12.0

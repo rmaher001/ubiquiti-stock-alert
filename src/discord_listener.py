@@ -78,6 +78,12 @@ class DiscordListener(discord.Client):
         if message.author == self.user:
             return
 
+        # Log all messages from UbiquitiStockAlerts for debugging
+        logger.info(
+            f"Message received - Channel: {message.channel.name}, "
+            f"Author: {message.author}, Roles mentioned: {[r.name for r in message.role_mentions]}"
+        )
+
         # Check for role mentions
         for role in message.role_mentions:
             role_name_lower = role.name.lower()

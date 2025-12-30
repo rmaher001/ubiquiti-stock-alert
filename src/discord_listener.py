@@ -35,12 +35,8 @@ class DiscordListener(discord.Client):
             on_stock_alert: Async callback when stock alert detected.
                            Called with (product_name, product_sku, message_content)
         """
-        # Minimal intents - we only need to receive messages
-        intents = discord.Intents.default()
-        intents.message_content = True
-        intents.guilds = True
-
-        super().__init__(intents=intents, **kwargs)
+        # discord.py-self doesn't use Intents like regular discord.py
+        super().__init__(**kwargs)
 
         self.watched_roles: Set[str] = {role.lower() for role in watched_roles}
         self.on_stock_alert = on_stock_alert

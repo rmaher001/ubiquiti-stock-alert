@@ -40,35 +40,21 @@ class DiscordListener(discord.Client):
 
         self.watched_roles: Set[str] = {role.lower() for role in watched_roles}
         self.on_stock_alert = on_stock_alert
-        self._ready = asyncio.Event()
         self._start_task: Optional[asyncio.Task] = None
 
     async def on_ready(self):
         """Called when the client is ready."""
-        try:
-            logger.info(f"Discord listener connected as {self.user}")
+        logger.info(f"Discord listener connected as {self.user}")
 
-            # Find the UbiquitiStockAlerts guild
-            guild = self.get_guild(UBIQUITI_STOCK_ALERTS_GUILD_ID)
-            if guild:
-                logger.info(f"Found UbiquitiStockAlerts server: {guild.name}")
-            else:
-                logger.warning(
-                    "UbiquitiStockAlerts server not found. "
-                    "Make sure the account has joined the server."
-                )
-        except Exception as e:
-            logger.error(f"Error in on_ready: {e}")
-        finally:
-            self._ready.set()
-            logger.info("Discord listener ready")
-
-    async def wait_until_ready_custom(self, timeout: float = 30.0):
-        """Wait until the client is ready with timeout."""
-        try:
-            await asyncio.wait_for(self._ready.wait(), timeout=timeout)
-        except asyncio.TimeoutError:
-            raise TimeoutError(f"Discord client failed to connect within {timeout}s")
+        # Find the UbiquitiStockAlerts guild
+        guild = self.get_guild(UBIQUITI_STOCK_ALERTS_GUILD_ID)
+        if guild:
+            logger.info(f"Found UbiquitiStockAlerts server: {guild.name}")
+        else:
+            logger.warning(
+                "UbiquitiStockAlerts server not found. "
+                "Make sure the account has joined the server."
+            )
 
     async def shutdown(self):
         """Gracefully shutdown the client."""
@@ -177,9 +163,13 @@ async def create_discord_listener(
     # Start client in background and store task reference
     client._start_task = asyncio.create_task(client.start(token))
 
-    # Wait for ready with error handling
+    # Wait for ready using discord.py's built-in method with timeout
     try:
-        await client.wait_until_ready_custom()
+        await asyncio.wait_for(client.wait_until_ready(), timeout=30.0)
+        logger.info("Discord client is ready")
+    except asyncio.TimeoutError:
+        logger.error("Discord client failed to become ready within 30s")
+        raise TimeoutError("Discord client failed to connect within 30.0s")
     except discord.LoginFailure:
         logger.error("Discord authentication failed - check token")
         raise ValueError("Invalid Discord token") from None

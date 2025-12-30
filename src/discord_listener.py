@@ -45,22 +45,23 @@ class DiscordListener(discord.Client):
 
     async def on_ready(self):
         """Called when the client is ready."""
-        logger.info(f"Discord listener connected as {self.user}")
+        try:
+            logger.info(f"Discord listener connected as {self.user}")
 
-        # Find the UbiquitiStockAlerts guild
-        guild = self.get_guild(UBIQUITI_STOCK_ALERTS_GUILD_ID)
-        if guild:
-            logger.info(f"Found UbiquitiStockAlerts server: {guild.name}")
-            # Log available roles for debugging
-            available_roles = [role.name for role in guild.roles if not role.is_default()]
-            logger.debug(f"Available roles: {available_roles}")
-        else:
-            logger.warning(
-                "UbiquitiStockAlerts server not found. "
-                "Make sure the account has joined the server."
-            )
-
-        self._ready.set()
+            # Find the UbiquitiStockAlerts guild
+            guild = self.get_guild(UBIQUITI_STOCK_ALERTS_GUILD_ID)
+            if guild:
+                logger.info(f"Found UbiquitiStockAlerts server: {guild.name}")
+            else:
+                logger.warning(
+                    "UbiquitiStockAlerts server not found. "
+                    "Make sure the account has joined the server."
+                )
+        except Exception as e:
+            logger.error(f"Error in on_ready: {e}")
+        finally:
+            self._ready.set()
+            logger.info("Discord listener ready")
 
     async def wait_until_ready_custom(self, timeout: float = 30.0):
         """Wait until the client is ready with timeout."""

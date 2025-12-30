@@ -25,13 +25,13 @@ store_poller:
   products:
     - sku: "uvc-g6-180"
       name: "G6 180"
-      url: "https://store.ui.com/us/en/collections/cameras-background/products/uvc-g6-180"
+      url: "https://store.ui.com/us/en/category/cameras-dome-turret/products/uvc-g6-180"
     - sku: "uvc-g6-pro-entry"
       name: "G6 Pro Entry"
-      url: "https://store.ui.com/us/en/collections/cameras-background/products/uvc-g6-pro-entry"
+      url: "https://store.ui.com/us/en/category/door-access-readers/products/uvc-g6-pro-entry"
     - sku: "utr"
       name: "UniFi Travel Router"
-      url: "https://store.ui.com/us/en/collections/accessories-background/products/utr"
+      url: "https://store.ui.com/us/en/category/wifi-special-devices/products/utr"
 
 home_assistant:
   # Webhook URL - replace with your HA instance

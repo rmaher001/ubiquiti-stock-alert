@@ -1,0 +1,14 @@
+services:
+  stock-alert:
+    build: .
+    container_name: ubiquiti-stock-alert
+    restart: unless-stopped
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - TZ=America/Los_Angeles
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

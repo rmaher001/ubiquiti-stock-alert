@@ -10,7 +10,7 @@ import discord
 logger = logging.getLogger(__name__)
 
 # UbiquitiStockAlerts server ID
-UBIQUITI_STOCK_ALERTS_GUILD_ID = 1082363534789873777
+UBIQUITI_STOCK_ALERTS_GUILD_ID = 1200139856194584797
 
 
 class DiscordListener(discord.Client):
